@@ -12,7 +12,7 @@ texto_xml = "".join(texto_xml)
 
 
 def write_to_file(texto):
-    file = open("medicina2.xml", "w")
+    file = open("medicina2.txt", "w")
     file.write(texto)
     file.close()
 
@@ -105,7 +105,7 @@ def remove_rest(texto):
 
 texto_xml = remove_rest(texto_xml)
 
-write_to_file(texto_xml)
+#write_to_file(texto_xml)
 
 
 defs_array = texto_xml.split("###")
