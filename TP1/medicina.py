@@ -11,8 +11,8 @@ texto_xml = texto_xml[23:-1]
 texto_xml = "".join(texto_xml)
 
 
-def write_to_file(texto):
-    file = open("medicina2.txt", "w")
+def write_to_file(texto,file):
+    file = open(file, "w")
     file.write(texto)
     file.close()
 
@@ -31,7 +31,10 @@ def remove_irrelevant(texto):
     texto = re.sub(r"#(\d+)#(.*)\n#(14|15)#(.*)\n",r'#\1#\2\3\n',texto)
     return texto
 
+
 texto_xml = remove_irrelevant(texto_xml)
+
+
 
 def remove_spaces_tags(texto):
     texto = re.sub(r"<i>(.*)</i>\n",r"\1\n",texto)
@@ -40,6 +43,7 @@ def remove_spaces_tags(texto):
     texto = re.sub(r" +",r" ",texto)
     texto = re.sub(r"#.*# *\n",r"",texto)
     return texto
+
 
 texto_xml = remove_spaces_tags(texto_xml)
 
@@ -61,6 +65,7 @@ def mark_defs(texto):
     return texto
 
 texto_xml = mark_defs(texto_xml)
+write_to_file(texto_xml,"defs.txt")
 
 def mark_categorias(texto):
     texto = re.sub(r"###(.*)\n#.*#(.*)\n",r'###\1\n\2\n',texto)
@@ -76,6 +81,9 @@ def mark_translations(texto):
     return texto
 
 texto_xml = mark_translations(texto_xml)
+write_to_file(texto_xml,"translations.txt")
+
+
 
 def mark_SYN_VID(texto):
     while re.search(r"#[56]#(.*)\n#[56]#(.*)",texto):
@@ -85,14 +93,16 @@ def mark_SYN_VID(texto):
     return texto
 
 texto_xml = mark_SYN_VID(texto_xml)
+write_to_file(texto_xml,"syn_vid.txt")
 
 def mark_notas(texto):
     while re.search(r"#9#(.*)\n#9#(.*)",texto):
         texto = re.sub(r"#9#(.*)\n#9#(.*)",r'#9#\1\2',texto)
-    texto = re.sub(r"<#9#(.*)\n",r'\1\n',texto)
+    texto = re.sub(r"#9#(.*)\n",r'\1\n',texto)
     return texto
 
 texto_xml = mark_notas(texto_xml)
+write_to_file(texto_xml,"notas.txt")
 
 
 def remove_rest(texto):
@@ -100,17 +110,19 @@ def remove_rest(texto):
     texto = re.sub(r"#(\d+)#(.*)\n#\1#(.*)",r'#\1#\2\3',texto)
     texto = re.sub(r"#\d+#",r'',texto)
     texto = re.sub(r" +",r" ",texto)
+    texto = re.sub(r"\n +",r"\n",texto)
     texto = re.sub(r"\n+",r"\n",texto)
     return texto
 
 texto_xml = remove_rest(texto_xml)
+write_to_file(texto_xml,"rest.txt")
 
-#write_to_file(texto_xml)
 
 
 defs_array = texto_xml.split("###")
 
-d = {}
+completas = []
+remissivas = []
 
 last = 0
 
@@ -122,16 +134,14 @@ def parse_completa(result):
         "nome": result.group(2).strip(),
         "género": result.group(3),
         "plural": "yes" if result.group(4) else "no",
+        "indíce": result.group(1),
     }
-    last = int(result.group(1))
-    d[last] = entrada
+    last += 1
+    completas.append(entrada)
     return entrada
 
 
 def parse_remissivas(defs,result):
-    entrada = d[last]
-    if "remissivas" not in entrada:    
-        entrada["remissivas"] = []
     first = defs[0]
     for index in range(1,len(defs)):
         if "Vid." not in defs[index]:
@@ -143,7 +153,7 @@ def parse_remissivas(defs,result):
     if result:= re.match(r" *Vid.-?(.*)",defs[1]):
         res = result.group(1).strip()
         referencia = {defs[0].strip(): res} 
-    entrada["remissivas"].append(referencia)
+    remissivas.append(referencia)
 
 for defs in defs_array:
     defs = defs.split("\n")
@@ -185,38 +195,36 @@ for defs in defs_array:
         else:
             if defs[index].strip():
                 print(f"{defs[0]}-Não encontrado: " + "".join(defs[index]))
-            break
         index +=1
     if traducoes:
         entrada["traducoes"] = traducoes
 
-completas = {}
 
-def completas_dict():
-    for k,v in d.items():
-        completas[v["nome"]] = k
+# def completas_dict():
+#     for k,v in d.items():
+#         completas[v["nome"]] = k
 
 
-def link_remissivas():
-    for k,v in d.items():
-        if "remissivas" in v:
-            for remissiva in v["remissivas"]:
-                for k2,v2 in remissiva.items():
-                    if v2 in completas:
-                        remissiva[k2] = (completas[v2],v2)
-                    else:
-                        print("Remissiva não encontrada: ")
-                        print(k,k2,v2)
+# def link_remissivas():
+#     for k,v in d.items():
+#         if "remissivas" in v:
+#             for remissiva in v["remissivas"]:
+#                 for k2,v2 in remissiva.items():
+#                     if v2 in completas:
+#                         remissiva[k2] = (completas[v2],v2)
+#                     else:
+#                         print("Remissiva não encontrada: ")
+#                         print(k,k2,v2)
 
 #completas_dict()
 #link_remissivas()
 
+
+d = {"completas": completas, "remissivas": remissivas}
+
 def stats():
-    l = len(d)
-    r = 0
-    for v in d.values():
-        if "remissivas" in v:
-            r += len(v["remissivas"])
+    l = len(completas)
+    r = len(remissivas)
     total = l + r
     print("Total de completas: " + str(l))
     print("Total de remissivas: " + str(r))
@@ -227,11 +235,11 @@ stats()
 
 def check_if_all_defs_exist():
     for i in range(1,5393):
-        if i not in d:
+        if i not in completas:
             print("Missing def: " + str(i))
 
 
-check_if_all_defs_exist()
+#check_if_all_defs_exist()
 
 import json
 
@@ -246,7 +254,7 @@ while True:
     n = input()
     if n == "exit":
         break
-    if int(n) in d:
-        print(d[int(n)])
+    if int(n) in completas:
+        print(completas[int(n)])
     else:
         print("Definition not found")
