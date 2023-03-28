@@ -9,8 +9,6 @@ import sys
 
 #Global variables
 
-
-
 def display_error(msg):
     print(f"ERROR: {msg}")
     sys.exit(1)
@@ -40,9 +38,9 @@ def reserved_words(reserved):
 
 
 # - 0 Quebra de página ✅
-# - 1 Separar pontuação❓
+# - 1 Separar pontuação✅
 # - 2 Marcar Capítulos ✅
-#   - Titulo do capítulo na linha seguinte
+#   - Titulo do capítulo na linha seguinte✅
 #   - Keywords para procurar capítulos
 # - 3 Separar por parágrafos ✅
 # - 4 Juntar linhas da mesma frase ✅
@@ -52,7 +50,7 @@ def reserved_words(reserved):
 
 def mark_capitulos(text):
     regex_cap =r".*(CAP[ÍI]TULO +\w+).*\n(.*)"
-    return re.sub(regex_cap, r"\n# \1 - \2", text)
+    return re.sub(regex_cap, r"\n# \1 - \2", text, flags=re.IGNORECASE)
 
 def remove_empty_lines(text):
     regex_nl = r"([a-z0-9,;])\n\n([a-z0-9,;])"
@@ -110,6 +108,7 @@ def build_parser():
     parser.add_argument('-cr', '--config-reserved',help='Config file with reserved words', default="conf/abrev.txt")
     parser.add_argument('-i','--input',nargs="+", help='Input file')
     parser.add_argument('-o','--output', help='Output file')
+    parser.add_argument("--chapter", help="Mark chapters", default="cap[ií]tulo")
     return parser
 
 
