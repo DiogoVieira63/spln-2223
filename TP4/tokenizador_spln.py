@@ -49,7 +49,7 @@ regex_cap =r".*(CAP[ÍI]TULO +\w+).*\n(.*)"
 
 text = re.sub(regex_cap, r"\n# \1 - \2", text)
 
-regex_nl = r"([a-z0-9,;])\n\n([a-z0-9,;])"
+regex_nl = r"(.*)\n\n+(.*)"
 
 text = re.sub(regex_nl, r"\1\n\2", text)
 

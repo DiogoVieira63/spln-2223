@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>grammar.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>grammar.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lark</span> <span class="kn">import</span> <span class="n">Lark</span><span class="p">,</span><span class="n">Token</span>
+<span class="kn">from</span> <span class="nn">lark.tree</span> <span class="kn">import</span> <span class="n">pydot__tree_to_png</span>
+<span class="kn">from</span> <span class="nn">lark</span> <span class="kn">import</span> <span class="n">Transformer</span>
+<span class="kn">from</span> <span class="nn">lark</span> <span class="kn">import</span> <span class="n">Discard</span>
+
+<span class="n">grammar</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">//Regras Sintaticas</span>
+<span class="s1">start: items+</span>
+<span class="s1">items: BREAK item+</span>
+<span class="s1">item : atributo_termo | lingua</span>
+<span class="s1">atributo_termo: &quot;_&quot; termo &quot;:&quot; valor</span>
+<span class="s1">lingua: def_lingua atributos_lingua*</span>
+<span class="s1">def_lingua: WORD &quot;:&quot; termo</span>
+<span class="s1">atributos_lingua: &quot;+&quot; termo &quot;:&quot; valor</span>
+<span class="s1">valor: FRASE | termo | INT | lista </span>
+<span class="s1">termo: WORD+</span>
+<span class="s1">lista: &quot;[&quot; valor (&quot;,&quot; valor)* &quot;]&quot;</span>
+<span class="s1">//Regras Lexicográficas</span>
+<span class="s1">BREAK: &quot;---&quot;</span>
+<span class="s1">FRASE: /.*\./</span>
+<span class="s1">WORD: /[\w\-\(\)][\w\()\-’%\/\+]*/u</span>
+<span class="s1">//Tratamento dos espaços em branco</span>
+<span class="si">%i</span><span class="s1">mport common.WS</span>
+<span class="si">%i</span><span class="s1">mport common.INT</span>
+<span class="si">%i</span><span class="s1">gnore WS</span>
+<span class="s1">&#39;&#39;&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">MedicinaTransformer</span><span class="p">(</span><span class="n">Transformer</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">termos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atributos</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linguas</span> <span class="o">=</span> <span class="p">{}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">termos</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">termo</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;atributos&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">atributos</span><span class="p">,</span> <span class="s2">&quot;linguas&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">linguas</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">termos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">termo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atributos</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linguas</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">args</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">args</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">atributo_termo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atributos</span><span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">args</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">lingua</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">linguas</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linguas</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)):</span>
+            <span class="n">value</span><span class="p">[</span><span class="s2">&quot;atributos&quot;</span><span class="p">][</span><span class="n">args</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linguas</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">args</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">def_lingua</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],{</span><span class="s2">&quot;palavra&quot;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;atributos&quot;</span><span class="p">:</span> <span class="p">{}})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">atributos_lingua</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">valor</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">valor</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">valor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">termo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">word</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">lista</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">args</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">WORD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">FRASE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">args</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">INT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>class ExemploTransformer(Transformer):</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>p = Lark(grammar)   #não muito bem</p>
+<p>f = open(&ldquo;medicina_completas.txt&rdquo;, &ldquo;r&rdquo;)
+frase = f.read()
+lista = frase.split(&ldquo;&mdash;&ldquo;)
+lista.pop(0)
+termos = []
+for i in range(len(lista)):
+   lista[i] = &ldquo;&mdash;&rdquo; + lista[i]
+   tree = p.parse(lista[i])
+   print(tree.pretty())
+   data = MedicinaTransformer().transform(tree)
+   termos += data</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="s2">&quot;hmtl&quot;</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>with open(&lsquo;data.json&rsquo;, &lsquo;w&rsquo;) as outfile:
+   json.dump(termos, outfile, indent=4, ensure_ascii=False)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data.json&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+    <span class="n">termos</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">addTermo</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span><span class="n">_from</span><span class="p">,</span><span class="n">to</span><span class="p">):</span>
+    <span class="n">langs</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;linguas&quot;</span><span class="p">][</span><span class="n">to</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">_from</span> <span class="o">==</span> <span class="n">to</span> <span class="k">else</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;linguas&quot;</span><span class="p">][</span><span class="n">to</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">langs</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;li&gt;&lt;h3&gt;</span><span class="si">{</span><span class="n">elem</span><span class="p">[</span><span class="s2">&quot;linguas&quot;</span><span class="p">][</span><span class="n">_from</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;palavra&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&lt;/h3&gt;&lt;ul&gt;&#39;</span>
+        <span class="k">for</span> <span class="n">palavra</span> <span class="ow">in</span> <span class="n">langs</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;li&gt;</span><span class="si">{</span><span class="n">palavra</span><span class="p">[</span><span class="s2">&quot;palavra&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&lt;/p&gt;&lt;/li&gt;&#39;</span>
+        <span class="n">text</span><span class="o">+=</span><span class="s2">&quot;&lt;/ul&gt;&lt;/li&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">text</span> 
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+
+<span class="n">indices</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">termos</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">_from</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;linguas&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">to</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;linguas&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">_from</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                <span class="n">indices</span><span class="p">[</span><span class="n">_from</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">to</span> <span class="ow">not</span> <span class="ow">in</span>  <span class="n">indices</span><span class="p">[</span><span class="n">_from</span><span class="p">]:</span>
+                <span class="n">indices</span><span class="p">[</span><span class="n">_from</span><span class="p">][</span><span class="n">to</span><span class="p">]</span><span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">indices</span><span class="p">[</span><span class="n">_from</span><span class="p">][</span><span class="n">to</span><span class="p">]</span> <span class="o">+=</span> <span class="n">addTermo</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span><span class="n">_from</span><span class="p">,</span><span class="n">to</span><span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">_from</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">to</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="n">_from</span><span class="p">]:</span>
+        <span class="n">pag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">          &lt;!DOCTYPE html&gt;</span>
+<span class="s2">            &lt;html&gt;</span>
+<span class="s2">                &lt;head&gt;</span>
+<span class="s2">                    &lt;meta charset=&quot;UTF-8&quot;/&gt;</span>
+<span class="s2">                    &lt;link rel=&quot;stylesheet&quot; href=&quot;../w3.css&quot;/&gt;</span>
+<span class="s2">                    &lt;title&gt;Dicionário Medicina&lt;/title&gt;</span>
+<span class="s2">                &lt;/head&gt;</span>
+<span class="s2">                &lt;body class=&quot;w3-light-gray&quot;&gt;</span>
+<span class="s2">                &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                    &lt;ul class=&quot;w3-ul&quot;&gt; </span>
+<span class="s2">                        </span><span class="si">{</span><span class="n">indices</span><span class="p">[</span><span class="n">_from</span><span class="p">][</span><span class="n">to</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">                    &lt;/ul&gt;</span>
+<span class="s2">                &lt;/div&gt;</span>
+<span class="s2">                &lt;/body&gt;</span>
+<span class="s2">            &lt;/html&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2">/dict_</span><span class="si">{</span><span class="n">_from</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">to</span><span class="si">}</span><span class="s2">.html&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pag</span><span class="p">)</span>
+
+
+<span class="n">links</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<span class="k">for</span> <span class="n">_from</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+    <span class="n">links</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&lt;li&gt;&lt;h3&gt;</span><span class="si">{</span><span class="n">_from</span><span class="si">}</span><span class="s2">&lt;/h3&gt;&lt;ul&gt;&quot;</span>
+    <span class="n">links</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;li&gt;&lt;a href=&quot;dict_</span><span class="si">{</span><span class="n">_from</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">_from</span><span class="si">}</span><span class="s1">.html&quot;&gt;Synonyms&lt;/a&gt;&#39;</span>
+    <span class="k">for</span> <span class="n">to</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="n">_from</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">_from</span> <span class="o">==</span> <span class="n">to</span><span class="p">):</span>
+            <span class="n">links</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;li&gt;&lt;a href=&quot;dict_</span><span class="si">{</span><span class="n">_from</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">to</span><span class="si">}</span><span class="s1">.html&quot;&gt;</span><span class="si">{</span><span class="n">to</span><span class="si">}</span><span class="s1">&lt;/a&gt;&#39;</span>
+    <span class="n">links</span><span class="o">+=</span><span class="s2">&quot;&lt;/ul&gt;&lt;/li&gt;&quot;</span>
+
+
+<span class="n">pag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  &lt;!DOCTYPE html&gt;</span>
+<span class="s2">    &lt;html&gt;</span>
+<span class="s2">        &lt;head&gt;</span>
+<span class="s2">            &lt;meta charset=&quot;UTF-8&quot;/&gt;</span>
+<span class="s2">            &lt;link rel=&quot;stylesheet&quot; href=&quot;../w3.css&quot;/&gt;</span>
+<span class="s2">            &lt;title&gt;Index&lt;/title&gt;</span>
+<span class="s2">        &lt;/head&gt;</span>
+<span class="s2">        &lt;body class=&quot;w3-light-gray&quot;&gt;</span>
+<span class="s2">        &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">            &lt;ul class=&quot;w3-ul&quot;&gt; </span>
+<span class="s2">                </span><span class="si">{</span><span class="n">links</span><span class="si">}</span>
+<span class="s2">            &lt;/ul&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        &lt;/body&gt;</span>
+<span class="s2">    &lt;/html&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2">/index.html&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pag</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

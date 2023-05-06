@@ -1,0 +1,10 @@
+---
+_indíce: 1
+_categoria: [ Anatomía ]
+es: ala
+en: wing
+pt: asa
+la: ala
+ga: á
++género: feminino
++multiplcidade: singular

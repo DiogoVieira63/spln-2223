@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>tokenizador_spln.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>tokenizador_spln.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">fileinput</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<span class="n">reserved</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Sra&quot;</span><span class="p">,</span><span class="s2">&quot;Sr&quot;</span><span class="p">,</span><span class="s2">&quot;Prof&quot;</span><span class="p">,</span><span class="s2">&quot;Srs&quot;</span><span class="p">,</span><span class="s2">&quot;Sras&quot;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">reserved_words</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">reserved</span>
+    <span class="n">reserved</span> <span class="o">+=</span> <span class="nb">input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">reserved</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;(?&lt;!</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">reserved</span><span class="p">]</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">):</span> 
+    <span class="n">arg</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">arg</span> <span class="o">==</span> <span class="s2">&quot;-r&quot;</span><span class="p">:</span>
+        <span class="n">reserved</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">reserved_words</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">arg</span> <span class="o">==</span> <span class="s2">&quot;-ra&quot;</span><span class="p">:</span>
+        <span class="n">reserved_words</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Argumento inválido:&quot;</span><span class="p">,</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">exit</span><span class="p">()</span>
+    <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reserved words:&quot;</span><span class="p">,</span><span class="n">reserved</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fileinput</span><span class="o">.</span><span class="n">input</span><span class="p">():</span>
+    <span class="n">text</span> <span class="o">+=</span> <span class="n">line</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>0 Quebra de página ✅
+1 Separar pontuação❓
+2 Marcar Capítulos ✅
+3 Separar por parágrafos ✅
+4 Juntar linhas da mesma frase ✅
+5 Uma frase por linha ✅</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">regex_cap</span> <span class="o">=</span><span class="sa">r</span><span class="s2">&quot;.*(CAP[ÍI]TULO +\w+).*\n(.*)&quot;</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex_cap</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\n# \1 - \2&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="n">regex_nl</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(.*)\n\n+(.*)&quot;</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex_nl</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1\n\2&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="n">array_poema</span> <span class="o">=</span> <span class="p">[]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">guarda_poema</span><span class="p">(</span><span class="n">match</span><span class="p">):</span>
+    <span class="n">array_poema</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&gt;&gt;</span><span class="si">{</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">array_poema</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;&lt;&quot;</span>
+    
+
+<span class="n">regex_poema</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;poema&gt;(.*?)&lt;/poema&gt;&quot;</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex_poema</span><span class="p">,</span><span class="n">guarda_poema</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span><span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">remove_empty_lines</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*\n&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+
+
+
+
+<span class="n">regex_linha</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;&quot;&quot;(?&lt;!\.)</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">reserved</span><span class="p">)</span><span class="si">}</span><span class="s2">\.(?!\.)&quot;&quot;&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">getAverageSize</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+<span class="n">regex_par</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(.*[!?.:])(?!\.\.)\n(?!#)&quot;</span>
+
+<span class="n">average</span> <span class="o">=</span> <span class="n">getAverageSize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">MAX</span> <span class="o">=</span> <span class="n">average</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">-</span> <span class="n">average</span><span class="o">/</span><span class="mi">10</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>print(MAX)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">check_par</span><span class="p">(</span><span class="n">match</span><span class="p">):</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="n">MAX</span> <span class="ow">and</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex_par</span><span class="p">,</span><span class="n">check_par</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+
+<span class="n">regex_merge_lines_par</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\n([^\t#].*)\n&quot;</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regex_merge_lines_par</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot; \1 &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;(?&lt;!\.)</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">reserved</span><span class="p">)</span><span class="si">}</span><span class="s2">([!?.:])(?![\n\.,]| [–\-])&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;\1\n&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>trim lines</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^ +&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">array_poema</span><span class="p">)):</span>
+    <span class="n">text</span><span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;&lt;&lt;&quot;</span><span class="p">,</span><span class="sa">f</span><span class="s2">&quot;&lt;poema&gt;</span><span class="si">{</span><span class="n">array_poema</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/poema&gt;&quot;</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
