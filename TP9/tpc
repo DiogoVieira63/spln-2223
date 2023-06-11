@@ -1,0 +1,3 @@
+get tables a funcionar
+get links ( encontrar a com href) | grep categoria
+for a in $(get_links url | grep category) ; do get_tables $a; done 
